@@ -6,22 +6,26 @@
 //  Copyright © 2018 Blake Lockley. All rights reserved.
 //
 
-import Cocoa
+import Metal
+import MetalKit
 
 class ViewController: NSViewController {
+    
+    var renderer: Renderer!
+    
+    var mtkView: MTKView {
+        return self.view as! MTKView
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        
+        let device = MTLCreateSystemDefaultDevice()!
+        renderer = Renderer(device: device)
+        
+        mtkView.device = device
+        mtkView.delegate = renderer
+        mtkView.colorPixelFormat = .bgra8Unorm
     }
-
-    override var representedObject: Any? {
-        didSet {
-        // Update the view, if already loaded.
-        }
-    }
-
 
 }
-

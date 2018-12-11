@@ -11,6 +11,10 @@
 		EFB12D2B21BFCF2800AEEF0E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB12D2A21BFCF2800AEEF0E /* ViewController.swift */; };
 		EFB12D2D21BFCF2900AEEF0E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EFB12D2C21BFCF2900AEEF0E /* Assets.xcassets */; };
 		EFB12D3021BFCF2900AEEF0E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EFB12D2E21BFCF2900AEEF0E /* Main.storyboard */; };
+		EFB12D3921BFCFCE00AEEF0E /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB12D3821BFCFCE00AEEF0E /* Renderer.swift */; };
+		EFB12D3B21BFD12900AEEF0E /* teapot.obj in Resources */ = {isa = PBXBuildFile; fileRef = EFB12D3A21BFD12900AEEF0E /* teapot.obj */; };
+		EFB12D3D21BFDC3400AEEF0E /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = EFB12D3C21BFDC3400AEEF0E /* Shaders.metal */; };
+		EFB12D3F21BFE36900AEEF0E /* MatrixUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB12D3E21BFE36900AEEF0E /* MatrixUtilities.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,6 +25,10 @@
 		EFB12D2F21BFCF2900AEEF0E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		EFB12D3121BFCF2900AEEF0E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EFB12D3221BFCF2900AEEF0E /* metal_teapot.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = metal_teapot.entitlements; sourceTree = "<group>"; };
+		EFB12D3821BFCFCE00AEEF0E /* Renderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderer.swift; sourceTree = "<group>"; };
+		EFB12D3A21BFD12900AEEF0E /* teapot.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = teapot.obj; sourceTree = "<group>"; };
+		EFB12D3C21BFDC3400AEEF0E /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
+		EFB12D3E21BFE36900AEEF0E /* MatrixUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatrixUtilities.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,6 +63,10 @@
 			children = (
 				EFB12D2821BFCF2800AEEF0E /* AppDelegate.swift */,
 				EFB12D2A21BFCF2800AEEF0E /* ViewController.swift */,
+				EFB12D3821BFCFCE00AEEF0E /* Renderer.swift */,
+				EFB12D3E21BFE36900AEEF0E /* MatrixUtilities.swift */,
+				EFB12D3C21BFDC3400AEEF0E /* Shaders.metal */,
+				EFB12D3A21BFD12900AEEF0E /* teapot.obj */,
 				EFB12D2C21BFCF2900AEEF0E /* Assets.xcassets */,
 				EFB12D2E21BFCF2900AEEF0E /* Main.storyboard */,
 				EFB12D3121BFCF2900AEEF0E /* Info.plist */,
@@ -123,6 +135,7 @@
 			files = (
 				EFB12D2D21BFCF2900AEEF0E /* Assets.xcassets in Resources */,
 				EFB12D3021BFCF2900AEEF0E /* Main.storyboard in Resources */,
+				EFB12D3B21BFD12900AEEF0E /* teapot.obj in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -133,7 +146,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EFB12D3D21BFDC3400AEEF0E /* Shaders.metal in Sources */,
+				EFB12D3F21BFE36900AEEF0E /* MatrixUtilities.swift in Sources */,
 				EFB12D2B21BFCF2800AEEF0E /* ViewController.swift in Sources */,
+				EFB12D3921BFCFCE00AEEF0E /* Renderer.swift in Sources */,
 				EFB12D2921BFCF2800AEEF0E /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
