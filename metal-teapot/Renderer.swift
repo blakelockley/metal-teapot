@@ -20,26 +20,27 @@ struct Uniforms {
 class Renderer: NSObject, MTKViewDelegate {
     
     let device: MTLDevice
-    private var commandQueue: MTLCommandQueue!
+    unowned let mtkView: MTKView
     
     // Resources
     private var meshes: [MTKMesh] = []
     private var vertexDescriptor: MTLVertexDescriptor!
     
     // Pipeline
+    private var commandQueue: MTLCommandQueue!
     private var pipelineState: MTLRenderPipelineState!
     
     // Unifroms
     var time: Float = 0
-    var size: CGSize!
     var uniforms: Uniforms!
     
-    init(device: MTLDevice) {
+    init(device: MTLDevice, mtkView: MTKView) {
         self.device = device
+        self.mtkView = mtkView
+        
         self.commandQueue = device.makeCommandQueue()
         
         super.init()
-        
         loadResources()
         buildPipeline()
     }
@@ -88,7 +89,7 @@ class Renderer: NSObject, MTKViewDelegate {
     //MARK: MTKViewDelegate
     
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
-        self.size = size
+        // pass
     }
     
     func draw(in view: MTKView) {
@@ -108,7 +109,7 @@ class Renderer: NSObject, MTKViewDelegate {
         
         let modelViewMatrix = viewMatrix * modelMatrix
         
-        let aspectRatio = Float(size.width / size.height)
+        let aspectRatio = Float(mtkView.frame.size.width / mtkView.frame.size.height)
         let projectionMatrix = float4x4(perspectiveProjectionFov: Float.pi / 3, aspectRatio: aspectRatio, nearZ: 0.1, farZ: 100)
         
         uniforms = Uniforms(modelViewMatrix: modelViewMatrix, projectionMatrix: projectionMatrix)

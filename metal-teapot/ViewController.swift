@@ -21,7 +21,7 @@ class ViewController: NSViewController {
         super.viewDidLoad()
         
         let device = MTLCreateSystemDefaultDevice()!
-        renderer = Renderer(device: device)
+        renderer = Renderer(device: device, mtkView: mtkView)
         
         mtkView.device = device
         mtkView.delegate = renderer
