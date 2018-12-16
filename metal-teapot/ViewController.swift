@@ -26,6 +26,8 @@ class ViewController: NSViewController {
         mtkView.device = device
         mtkView.delegate = renderer
         mtkView.colorPixelFormat = .bgra8Unorm
+        mtkView.depthStencilPixelFormat = .depth32Float
+        mtkView.framebufferOnly = false
     }
 
 }

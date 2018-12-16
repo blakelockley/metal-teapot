@@ -15,6 +15,7 @@ import simd
 struct Uniforms {
     var modelViewMatrix: float4x4
     var projectionMatrix: float4x4
+    var normalMatrix: float3x3
 }
 
 class Renderer: NSObject, MTKViewDelegate {
@@ -29,6 +30,7 @@ class Renderer: NSObject, MTKViewDelegate {
     // Pipeline
     private var commandQueue: MTLCommandQueue!
     private var pipelineState: MTLRenderPipelineState!
+    private var depthStencilState: MTLDepthStencilState!
     
     // Unifroms
     var time: Float = 0
@@ -50,9 +52,8 @@ class Renderer: NSObject, MTKViewDelegate {
         
         let vertexDescriptor = MDLVertexDescriptor()
         vertexDescriptor.attributes[0] = MDLVertexAttribute(name: MDLVertexAttributePosition, format: .float3, offset: 0, bufferIndex: 0)
-        vertexDescriptor.layouts[0] = MDLVertexBufferLayout(stride: MemoryLayout<Float>.size * 3)
-        
-        self.vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(vertexDescriptor)
+        vertexDescriptor.attributes[1] = MDLVertexAttribute(name: MDLVertexAttributeNormal, format: .float3, offset: MemoryLayout<Float>.size * 3, bufferIndex: 0)
+        vertexDescriptor.layouts[0] = MDLVertexBufferLayout(stride: MemoryLayout<Float>.size * 6)
         
         let bufferAllocator = MTKMeshBufferAllocator(device: device)
         let asset = MDLAsset(url: modelURL, vertexDescriptor: vertexDescriptor, bufferAllocator: bufferAllocator)
@@ -62,6 +63,8 @@ class Renderer: NSObject, MTKViewDelegate {
         } catch {
             fatalError("Unable to load meshes")
         }
+        
+        self.vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(vertexDescriptor)
     }
     
     func buildPipeline() {
@@ -75,9 +78,16 @@ class Renderer: NSObject, MTKViewDelegate {
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
         pipelineDescriptor.vertexFunction = vertexFunction
         pipelineDescriptor.fragmentFunction = fragmentFunction
-        
         pipelineDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
+        pipelineDescriptor.depthAttachmentPixelFormat = .depth32Float
         pipelineDescriptor.vertexDescriptor = vertexDescriptor
+        
+        
+        let depthStencilDescriptor = MTLDepthStencilDescriptor()
+        depthStencilDescriptor.depthCompareFunction = .less
+        depthStencilDescriptor.isDepthWriteEnabled = true
+        
+        self.depthStencilState = device.makeDepthStencilState(descriptor: depthStencilDescriptor)
         
         do {
             pipelineState = try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
@@ -93,14 +103,6 @@ class Renderer: NSObject, MTKViewDelegate {
     }
     
     func draw(in view: MTKView) {
-        let commandBuffer = commandQueue.makeCommandBuffer()!
-        
-        guard
-            let renderPassDescriptor = view.currentRenderPassDescriptor,
-            let drawable = view.currentDrawable else {
-                fatalError("Could not retreive drawable")
-        }
-        
         time += 1 / Float(view.preferredFramesPerSecond)
         let angle = -time
         
@@ -112,11 +114,26 @@ class Renderer: NSObject, MTKViewDelegate {
         let aspectRatio = Float(mtkView.frame.size.width / mtkView.frame.size.height)
         let projectionMatrix = float4x4(perspectiveProjectionFov: Float.pi / 3, aspectRatio: aspectRatio, nearZ: 0.1, farZ: 100)
         
-        uniforms = Uniforms(modelViewMatrix: modelViewMatrix, projectionMatrix: projectionMatrix)
+        let normalMatrix = modelViewMatrix.normalMatrix()
         
+        uniforms = Uniforms(modelViewMatrix: modelViewMatrix, projectionMatrix: projectionMatrix, normalMatrix: normalMatrix)
+        
+        let commandBuffer = commandQueue.makeCommandBuffer()!
+        
+        guard
+            let renderPassDescriptor = view.currentRenderPassDescriptor,
+            let drawable = view.currentDrawable else {
+                fatalError("Could not retreive drawable")
+        }
+        
+        renderPassDescriptor.colorAttachments[0].texture = drawable.texture
+        renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 1)
+
         let commandEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor)!
         commandEncoder.setRenderPipelineState(pipelineState)
-        
+        commandEncoder.setDepthStencilState(depthStencilState)
+        commandEncoder.setFrontFacing(.counterClockwise)
+        commandEncoder.setCullMode(.back)
         commandEncoder.setVertexBytes(&uniforms, length: MemoryLayout<Uniforms>.size, index: 1)
         
         for mesh in meshes {
@@ -125,6 +142,7 @@ class Renderer: NSObject, MTKViewDelegate {
             
             for submesh in mesh.submeshes {
                 let indexBuffer = submesh.indexBuffer
+                
                 commandEncoder.drawIndexedPrimitives(type: submesh.primitiveType,
                                                      indexCount: submesh.indexCount,
                                                      indexType: submesh.indexType,

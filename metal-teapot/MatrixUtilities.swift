@@ -52,4 +52,13 @@ extension float4x4 {
                   float4( 0,  0, zz, zw),
                   float4( 0,  0, wz,  0))
     }
+    
+    
+    func normalMatrix() -> float3x3 {
+        let normal = float3x3(float3(self.columns.0.x, self.columns.0.y, self.columns.0.z),
+                              float3(self.columns.1.x, self.columns.1.y, self.columns.1.z),
+                              float3(self.columns.2.x, self.columns.2.y, self.columns.2.z))
+        
+        return normal.inverse.transpose
+    }
 }
