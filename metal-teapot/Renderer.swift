@@ -68,6 +68,12 @@ class Renderer: NSObject, MTKViewDelegate {
     }
     
     func buildPipeline() {
+        let depthStencilDescriptor = MTLDepthStencilDescriptor()
+        depthStencilDescriptor.depthCompareFunction = .less
+        depthStencilDescriptor.isDepthWriteEnabled = true
+        
+        self.depthStencilState = device.makeDepthStencilState(descriptor: depthStencilDescriptor)
+        
         guard let library = device.makeDefaultLibrary() else {
             fatalError("Unable to load default library")
         }
@@ -76,21 +82,14 @@ class Renderer: NSObject, MTKViewDelegate {
         let fragmentFunction = library.makeFunction(name: "fragment_main")
         
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
+        pipelineDescriptor.vertexDescriptor = vertexDescriptor
         pipelineDescriptor.vertexFunction = vertexFunction
         pipelineDescriptor.fragmentFunction = fragmentFunction
         pipelineDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
         pipelineDescriptor.depthAttachmentPixelFormat = .depth32Float
-        pipelineDescriptor.vertexDescriptor = vertexDescriptor
-        
-        
-        let depthStencilDescriptor = MTLDepthStencilDescriptor()
-        depthStencilDescriptor.depthCompareFunction = .less
-        depthStencilDescriptor.isDepthWriteEnabled = true
-        
-        self.depthStencilState = device.makeDepthStencilState(descriptor: depthStencilDescriptor)
-        
+
         do {
-            pipelineState = try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
+            self.pipelineState = try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
         } catch {
             fatalError("Unable to create pipeline state")
         }
