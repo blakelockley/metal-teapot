@@ -47,7 +47,7 @@ class Renderer: NSObject, MTKViewDelegate {
         buildPipeline()
     }
     
-    func loadResources() {
+    private func loadResources() {
         let modelURL = Bundle.main.url(forResource: "teapot", withExtension: "obj")
         
         let vertexDescriptor = MDLVertexDescriptor()
@@ -67,7 +67,7 @@ class Renderer: NSObject, MTKViewDelegate {
         self.vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(vertexDescriptor)
     }
     
-    func buildPipeline() {
+    private func buildPipeline() {
         let depthStencilDescriptor = MTLDepthStencilDescriptor()
         depthStencilDescriptor.depthCompareFunction = .less
         depthStencilDescriptor.isDepthWriteEnabled = true
