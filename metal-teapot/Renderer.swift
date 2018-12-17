@@ -33,8 +33,8 @@ class Renderer: NSObject, MTKViewDelegate {
     private var depthStencilState: MTLDepthStencilState!
     
     // Unifroms
-    var time: Float = 0
-    var uniforms: Uniforms!
+    private var time: Float = 0
+    private var uniforms: Uniforms!
     
     init(device: MTLDevice, mtkView: MTKView) {
         self.device = device
@@ -105,7 +105,7 @@ class Renderer: NSObject, MTKViewDelegate {
         time += 1 / Float(view.preferredFramesPerSecond)
         let angle = -time
         
-        let modelMatrix = float4x4(rotationAbout: float3(0, 1, 0), by: angle) *  float4x4(scaleBy: 0.2)
+        let modelMatrix = float4x4(rotationAbout: float3(0, 1, 0), by: angle) * float4x4(scaleBy: 0.2)
         let viewMatrix = float4x4(translationBy: float3(0, -0.2, -2))
         
         let modelViewMatrix = viewMatrix * modelMatrix
