@@ -13,9 +13,11 @@
 		EFB12D2D21BFCF2900AEEF0E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EFB12D2C21BFCF2900AEEF0E /* Assets.xcassets */; };
 		EFB12D3021BFCF2900AEEF0E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EFB12D2E21BFCF2900AEEF0E /* Main.storyboard */; };
 		EFB12D3921BFCFCE00AEEF0E /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB12D3821BFCFCE00AEEF0E /* Renderer.swift */; };
-		EFB12D3B21BFD12900AEEF0E /* teapot-position-only.obj in Resources */ = {isa = PBXBuildFile; fileRef = EFB12D3A21BFD12900AEEF0E /* teapot-position-only.obj */; };
 		EFB12D3D21BFDC3400AEEF0E /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = EFB12D3C21BFDC3400AEEF0E /* Shaders.metal */; };
 		EFB12D3F21BFE36900AEEF0E /* MatrixUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB12D3E21BFE36900AEEF0E /* MatrixUtilities.swift */; };
+		EFC3D45221C90DC5001A89F8 /* TextureShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = EFC3D45121C90DC5001A89F8 /* TextureShader.metal */; };
+		EFC3D45521C90F28001A89F8 /* skull.obj in Resources */ = {isa = PBXBuildFile; fileRef = EFC3D45321C90F28001A89F8 /* skull.obj */; };
+		EFC3D45621C90F28001A89F8 /* skull.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = EFC3D45421C90F28001A89F8 /* skull.jpeg */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,9 +30,11 @@
 		EFB12D3121BFCF2900AEEF0E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EFB12D3221BFCF2900AEEF0E /* metal_teapot.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = metal_teapot.entitlements; sourceTree = "<group>"; };
 		EFB12D3821BFCFCE00AEEF0E /* Renderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderer.swift; sourceTree = "<group>"; };
-		EFB12D3A21BFD12900AEEF0E /* teapot-position-only.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "teapot-position-only.obj"; sourceTree = "<group>"; };
 		EFB12D3C21BFDC3400AEEF0E /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
 		EFB12D3E21BFE36900AEEF0E /* MatrixUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatrixUtilities.swift; sourceTree = "<group>"; };
+		EFC3D45121C90DC5001A89F8 /* TextureShader.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = TextureShader.metal; sourceTree = "<group>"; };
+		EFC3D45321C90F28001A89F8 /* skull.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = skull.obj; sourceTree = "<group>"; };
+		EFC3D45421C90F28001A89F8 /* skull.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = skull.jpeg; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,8 +72,10 @@
 				EFB12D3821BFCFCE00AEEF0E /* Renderer.swift */,
 				EFB12D3E21BFE36900AEEF0E /* MatrixUtilities.swift */,
 				EFB12D3C21BFDC3400AEEF0E /* Shaders.metal */,
-				EFB12D3A21BFD12900AEEF0E /* teapot-position-only.obj */,
+				EFC3D45121C90DC5001A89F8 /* TextureShader.metal */,
 				EFA1FFFF21C3DC7E00505DC1 /* teapot.obj */,
+				EFC3D45321C90F28001A89F8 /* skull.obj */,
+				EFC3D45421C90F28001A89F8 /* skull.jpeg */,
 				EFB12D2C21BFCF2900AEEF0E /* Assets.xcassets */,
 				EFB12D2E21BFCF2900AEEF0E /* Main.storyboard */,
 				EFB12D3121BFCF2900AEEF0E /* Info.plist */,
@@ -136,10 +142,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EFC3D45621C90F28001A89F8 /* skull.jpeg in Resources */,
 				EFA1000021C3DC7E00505DC1 /* teapot.obj in Resources */,
+				EFC3D45521C90F28001A89F8 /* skull.obj in Resources */,
 				EFB12D2D21BFCF2900AEEF0E /* Assets.xcassets in Resources */,
 				EFB12D3021BFCF2900AEEF0E /* Main.storyboard in Resources */,
-				EFB12D3B21BFD12900AEEF0E /* teapot-position-only.obj in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -152,6 +159,7 @@
 			files = (
 				EFB12D3D21BFDC3400AEEF0E /* Shaders.metal in Sources */,
 				EFB12D3F21BFE36900AEEF0E /* MatrixUtilities.swift in Sources */,
+				EFC3D45221C90DC5001A89F8 /* TextureShader.metal in Sources */,
 				EFB12D2B21BFCF2800AEEF0E /* ViewController.swift in Sources */,
 				EFB12D3921BFCFCE00AEEF0E /* Renderer.swift in Sources */,
 				EFB12D2921BFCF2800AEEF0E /* AppDelegate.swift in Sources */,

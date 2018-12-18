@@ -26,6 +26,7 @@ class Renderer: NSObject, MTKViewDelegate {
     // Resources
     private var meshes: [MTKMesh] = []
     private var vertexDescriptor: MTLVertexDescriptor!
+    private var texture: MTLTexture!
     
     // Pipeline
     private var commandQueue: MTLCommandQueue!
@@ -48,23 +49,36 @@ class Renderer: NSObject, MTKViewDelegate {
     }
     
     private func loadResources() {
-        let modelURL = Bundle.main.url(forResource: "teapot", withExtension: "obj")
+        let modelURL = Bundle.main.url(forResource: "skull", withExtension: "obj")
         
         let vertexDescriptor = MDLVertexDescriptor()
         vertexDescriptor.attributes[0] = MDLVertexAttribute(name: MDLVertexAttributePosition, format: .float3, offset: 0, bufferIndex: 0)
-        vertexDescriptor.attributes[1] = MDLVertexAttribute(name: MDLVertexAttributeNormal, format: .float3, offset: MemoryLayout<Float>.size * 3, bufferIndex: 0)
-        vertexDescriptor.layouts[0] = MDLVertexBufferLayout(stride: MemoryLayout<Float>.size * 6)
+        vertexDescriptor.attributes[1] = MDLVertexAttribute(name: MDLVertexAttributeTextureCoordinate, format: .float2, offset: MemoryLayout<Float>.size * 3, bufferIndex: 0)
+        vertexDescriptor.layouts[0] = MDLVertexBufferLayout(stride: MemoryLayout<Float>.size * 5)
         
         let bufferAllocator = MTKMeshBufferAllocator(device: device)
         let asset = MDLAsset(url: modelURL, vertexDescriptor: vertexDescriptor, bufferAllocator: bufferAllocator)
         
+        let modelMeshes: [MDLMesh]
+        
         do {
-            (_, meshes) = try MTKMesh.newMeshes(asset: asset, device: device)
+            (modelMeshes, meshes) = try MTKMesh.newMeshes(asset: asset, device: device)
         } catch {
             fatalError("Unable to load meshes")
         }
         
+        modelMeshes.first!.flipTextureCoordinates(inAttributeNamed: MDLVertexAttributeTextureCoordinate)
+        
         self.vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(vertexDescriptor)
+        
+        let modelTexture = MDLTexture(named: "skull.jpeg")!
+        let textureLoader = MTKTextureLoader(device: self.device)
+        
+        do {
+            texture = try textureLoader.newTexture(texture: modelTexture, options: nil)
+        } catch {
+            fatalError("Unable to create texture")
+        }
     }
     
     private func buildPipeline() {
@@ -78,8 +92,8 @@ class Renderer: NSObject, MTKViewDelegate {
             fatalError("Unable to load default library")
         }
         
-        let vertexFunction = library.makeFunction(name: "vertex_main")
-        let fragmentFunction = library.makeFunction(name: "fragment_main")
+        let vertexFunction = library.makeFunction(name: "tex_vertex")
+        let fragmentFunction = library.makeFunction(name: "tex_fragment")
         
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
         pipelineDescriptor.vertexDescriptor = vertexDescriptor
@@ -87,7 +101,7 @@ class Renderer: NSObject, MTKViewDelegate {
         pipelineDescriptor.fragmentFunction = fragmentFunction
         pipelineDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
         pipelineDescriptor.depthAttachmentPixelFormat = .depth32Float
-
+        
         do {
             self.pipelineState = try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
         } catch {
@@ -105,8 +119,8 @@ class Renderer: NSObject, MTKViewDelegate {
         time += 1 / Float(view.preferredFramesPerSecond)
         let angle = -time
         
-        let modelMatrix = float4x4(rotationAbout: float3(0, 1, 0), by: angle) * float4x4(scaleBy: 0.2)
-        let viewMatrix = float4x4(translationBy: float3(0, -0.2, -2))
+        let modelMatrix = float4x4(rotationAbout: float3(0, 1, 0), by: angle) * float4x4(scaleBy: 0.005)
+        let viewMatrix = float4x4(translationBy: float3(0, 0, -2))
         
         let modelViewMatrix = viewMatrix * modelMatrix
         
@@ -127,12 +141,14 @@ class Renderer: NSObject, MTKViewDelegate {
         
         renderPassDescriptor.colorAttachments[0].texture = drawable.texture
         renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 1)
-
+        
         let commandEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor)!
         commandEncoder.setRenderPipelineState(pipelineState)
         commandEncoder.setDepthStencilState(depthStencilState)
         commandEncoder.setFrontFacing(.counterClockwise)
         commandEncoder.setCullMode(.back)
+        
+        commandEncoder.setFragmentTexture(texture, index: 0)
         commandEncoder.setVertexBytes(&uniforms, length: MemoryLayout<Uniforms>.size, index: 1)
         
         for mesh in meshes {
